@@ -1,6 +1,6 @@
 <template>
   <view>
-    cates
+    goodlist
   </view>
 </template>
 

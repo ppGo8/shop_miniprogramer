@@ -23,3 +23,12 @@ export function createApp() {
   }
 }
 // #endif
+
+// 封装弹框方法
+uni.$showMsg = function(title='数据氢气失败',duration=1500){
+  uni.showToast({
+    title,
+    duration,
+    icon:'none'
+  })
+}

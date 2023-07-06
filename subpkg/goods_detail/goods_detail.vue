@@ -1,6 +1,6 @@
 <template>
   <view>
-    cates
+    
   </view>
 </template>
 
