@@ -1,5 +1,9 @@
 <template>
   <view>
+    <!-- 使用自定义搜索组件 -->
+    <my-search @click="gotoSearch"></my-search>
+    <!-- <my-search :bgcolor="'pink'" radius="3"></my-search> -->
+    <!-- 滑动区域 -->
     <view class="scroll-view-container">
       <!-- 左侧滑动区域 -->
       <scroll-view class="left-scroll-view" :style="{height:usefulDeviceHeight + 'px'}" scroll-y>
@@ -13,7 +17,8 @@
       </scroll-view>
 
       <!-- 右侧滑动区域 -->
-      <scroll-view class="right-scroll-view"  :style="{height:usefulDeviceHeight + 'px'}" scroll-y :scroll-top="scrollTop">
+      <scroll-view class="right-scroll-view" :style="{height:usefulDeviceHeight + 'px'}" scroll-y
+        :scroll-top="scrollTop">
         <view class="cate-lv2" v-for="(item2,i2) in cateLevel2" :key="i2">
           <!-- 二级分类的标题 -->
           <view class="cate-lv2-title">
@@ -30,7 +35,7 @@
         </view>
       </scroll-view>
     </view>
-</view>
+  </view>
 </template>
 
 <script>
@@ -41,15 +46,14 @@
         cateList: [], // 分类数据列表
         active: 0, // 左侧导航激活项索引
         cateLevel2: [], // 二级分类列表
-        scrollTop:0,// 右侧滑动区域,单项绑定的数据;数据只能从这里传到浏览器
-
+        scrollTop: 0, // 右侧滑动区域,单项绑定的数据;数据只能从这里传到浏览器
       };
     },
     onLoad() {
       // 动态获取使用小程序的设备信息
       const sysInfo = uni.getSystemInfoSync()
       // 设备可用高度,除了tabbar和navigationbar
-      this.usefulDeviceHeight = sysInfo.windowHeight
+      this.usefulDeviceHeight = sysInfo.windowHeight - 50
       // 获取分类数据
       this.getCateList()
 
@@ -84,14 +88,21 @@
         this.scrollTop = this.scrollTop === 0 ? 1 : 0
       },
       // 三级页面跳转到
-      gotoGoodsList(item){
+      gotoGoodsList(item) {
         uni.navigateTo({
-          url:'/subpkg/goods_list/goods_list?cid=' + item.cat_id
+          url: '/subpkg/goods_list/goods_list?cid=' + item.cat_id
+        })
+      },
+      gotoSearch() {
+        uni.navigateTo({
+          url: '/subpkg/search/search'
         })
       }
-
+    
     }
+  
   }
+  
 </script>
 
 <style lang="scss">
