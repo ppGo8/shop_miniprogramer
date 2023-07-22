@@ -30,20 +30,52 @@
     <rich-text :nodes="goods_info.goods_introduce"></rich-text>
 
     <!-- 商品底部导航区域 -->
-     <view class="goods_nav">
-       <!-- fill 控制右侧按钮的样式 -->
-       <!-- options 左侧按钮的配置项 -->
-       <!-- buttonGroup 右侧按钮的配置项 -->
-       <!-- click 左侧按钮的点击事件处理函数 -->
-       <!-- buttonClick 右侧按钮的点击事件处理函数 -->
-       <uni-goods-nav :fill="true" :options="options" :buttonGroup="buttonGroup" @click="onClick" @buttonClick="buttonClick" />
-     </view>
+    <view class="goods_nav">
+      <!-- fill 控制右侧按钮的样式 -->
+      <!-- options 左侧按钮的配置项 -->
+      <!-- buttonGroup 右侧按钮的配置项 -->
+      <!-- click 左侧按钮的点击事件处理函数 -->
+      <!-- buttonClick 右侧按钮的点击事件处理函数 -->
+      <uni-goods-nav :fill="true" :options="options" :buttonGroup="buttonGroup" @click="onClick"
+        @buttonClick="buttonClick" />
+    </view>
 
   </view>
 </template>
 
 <script>
+  import {
+    mapState,
+    mapMutations,
+    mapGetters
+  } from 'vuex'
   export default {
+    computed: {
+      ...mapState('m_cart', []),
+      ...mapGetters('m_cart', ['total'])
+    },
+    watch: {
+      // total(newVal){
+      //   // find方法返回数组对象的引用
+      //   const findResult = this.options.find(x => x.text ==='购物车')
+      //   if(findResult){
+      //     // total发生了变化就赋值给
+      //     findResult.info = newVal
+      //   }
+      // }
+      total: {
+        // 页面加载完毕后就调用一次
+        immediate: true,
+        handler(newVal) {
+          // find方法返回数组对象的引用
+          const findResult = this.options.find(x => x.text === '购物车')
+          if (findResult) {
+            // total发生了变化就赋值给
+            findResult.info = newVal
+          }
+        }
+      }
+    },
     data() {
       return {
         goods_info: {},
@@ -54,7 +86,7 @@
         }, {
           icon: 'cart',
           text: '购物车',
-          info: 2
+          info: 0
         }],
         // 右侧按钮组的配置对象
         buttonGroup: [{
@@ -76,9 +108,11 @@
       this.getGoodsDetail(goods_id)
     },
     methods: {
+      ...mapMutations('m_cart', ['addToCart']),
       async getGoodsDetail(goods_id) {
         await uni.request({
           url: "https://api-hmugo-web.itheima.net/api/public/v1/goods/detail",
+          // 传递的参数
           data: {
             goods_id: goods_id
           },
@@ -97,14 +131,33 @@
           urls: this.goods_info.pics.map(x => x.pics_big)
         })
       },
-      onClick(e){
-        if(e.content.text === '购物车'){
+      onClick(e) {
+        if (e.content.text === '购物车') {
           uni.switchTab({
-            url:'/pages/cart/cart'
+            url: '/pages/cart/cart'
           })
         }
-        
+      },
+      buttonClick(e) {
+        // console.log(e);
+        if (e.content.text === '加入购物车') {
+          // 组织一个商品的信息对象，都是之前请求获得的
+          const goods = {
+            // 用户在商品列表，点击商品图片那么就将商品id传递给这个页面
+            // 该页面在onload是，自动发送request请求得到的有关商品的数据
+            goods_id: this.goods_info.goods_id,
+            goods_name: this.goods_info.goods_name,
+            goods_price: this.goods_info.goods_price,
+            goods_count: 1, // 默认是1
+            goods_small_logo: this.goods_info.goods_small_logo,
+            goods_state: true, // 默认是true
+          }
+          // 调用addToCart方法
+          this.addToCart(goods)
+        }
+
       }
+
     },
   }
 </script>
@@ -159,16 +212,21 @@
       color: gray;
     }
   }
-  
+
   // 商品底部导航
   .goods_nav {
     position: fixed;
     bottom: 0;
     left: 0;
     width: 100%;
+
   }
-  .goods-detail-container{
+
+  .goods-detail-container {
     // 避免页面内容被底部导航栏覆盖,显示不出来下面的部分
     padding-bottom: 50px;
+  }
+  .uni-tab__cart-box {
+    padding-bottom: 10px;
   }
 </style>

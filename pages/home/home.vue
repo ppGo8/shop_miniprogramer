@@ -4,7 +4,7 @@
     <view class="search-box">
       <my-search @click="gotoSearch"></my-search>
     </view>
-    
+
     <!-- 1.首页轮播图区域 -->
     <swiper :indicator-dots="true" :autoplay="true" :interval="3000" :duration="1000" :circular="true">
       <swiper-item v-for="(item,index) in swiperList" key="index">
@@ -22,37 +22,41 @@
       </view>
     </view>
 
-  <!-- 3.楼层区域 -->
-  <view class="floor-list">
-    <!-- 每个楼层的item项目 -->
-    <view class="floor-item" v-for="(item,i) in floorList" :key="i">
-      <!-- 标题区域 -->
-      <image :src="item.floor_title.image_src" class="floor-title" ></image>
-      
-      <!-- 图片区域 -->
-      <view class="floor-img-box">
-        <!-- 左侧大盒子区域 -->
-        <navigator class="letf-img-box" :url="item.product_list[0].url"> 
-          <image :src="item.product_list[0].image_src" :style=" { width: item.product_list[0].image_width + 'rpx'}" mode="widthFix"></image>
-        </navigator>
-        <!-- 右侧4个小盒子区域 -->
-        <view class="right-img-box">
-          <navigator class="right-img-item" v-for="(item2,index2) in item.product_list" :key="index2" v-if="index2!==0" :url="item2.url">
-            <image :src="item2.image_src" :style="{width:item2.image_width + 'rpx'}" mode="widthFix"></image>
+    <!-- 3.楼层区域 -->
+    <view class="floor-list">
+      <!-- 每个楼层的item项目 -->
+      <view class="floor-item" v-for="(item,i) in floorList" :key="i">
+        <!-- 标题区域 -->
+        <image :src="item.floor_title.image_src" class="floor-title"></image>
+
+        <!-- 图片区域 -->
+        <view class="floor-img-box">
+          <!-- 左侧大盒子区域 -->
+          <navigator class="letf-img-box" :url="item.product_list[0].url">
+            <image :src="item.product_list[0].image_src" :style=" { width: item.product_list[0].image_width + 'rpx'}"
+              mode="widthFix"></image>
           </navigator>
+          <!-- 右侧4个小盒子区域 -->
+          <view class="right-img-box">
+            <navigator class="right-img-item" v-for="(item2,index2) in item.product_list" :key="index2"
+              v-if="index2!==0" :url="item2.url">
+              <image :src="item2.image_src" :style="{width:item2.image_width + 'rpx'}" mode="widthFix"></image>
+            </navigator>
+          </view>
+
         </view>
-        
       </view>
+
     </view>
-    
-  </view>
-  
+
 
   </view>
 </template>
 
 <script>
+  import badgeMix from '@/mixins/tabbar-badge.js' // 渲染tababr购物车右上角徽标
   export default {
+    mixins: [badgeMix],
     data() {
       return {
         // 1.1 轮播图数据列表
@@ -60,7 +64,7 @@
         // 2.1 分类导航数据
         navList: [],
         // 3.1 楼层数据
-        floorList:[],
+        floorList: [],
       };
     },
     //小程序刚加载时,调用下列方法
@@ -109,8 +113,8 @@
           success: (res) => {
             console.log('楼层数据数据请求:', res.errMsg);
             // 处理数据
-            res.data.message.forEach(floor =>{
-              floor.product_list.forEach(prod =>{
+            res.data.message.forEach(floor => {
+              floor.product_list.forEach(prod => {
                 // 修改路径 
                 prod.url = '/subpkg/goods_list/goods_list?' + prod.navigator_url.split('?')[1]
               })
@@ -170,34 +174,33 @@
       height: 140rpx;
     }
   }
-  
-   // 3.楼层区域
-   .floor-title{
-     width: 100%;
-     height: 60rpx;
-   }
-   .floor-img-box{
-     display: flex;
-     padding: 10rpx;
-   }
-   .right-img-box{
-     display: flex;
-     flex-wrap: wrap;
-     // 分散布局
-     justify-content: space-around;
-     
-   }
-   
-   // 搜索栏吸顶效果
-   .search-box {
-     // 设置定位效果为“吸顶”
-     position: sticky;
-     // 吸顶的“位置”
-     top: 0;
-     // 提高层级，防止被轮播图覆盖
-     z-index: 999;
-   }
-  
-   
-   
+
+  // 3.楼层区域
+  .floor-title {
+    width: 100%;
+    height: 60rpx;
+  }
+
+  .floor-img-box {
+    display: flex;
+    padding: 10rpx;
+  }
+
+  .right-img-box {
+    display: flex;
+    flex-wrap: wrap;
+    // 分散布局
+    justify-content: space-around;
+
+  }
+
+  // 搜索栏吸顶效果
+  .search-box {
+    // 设置定位效果为“吸顶”
+    position: sticky;
+    // 吸顶的“位置”
+    top: 0;
+    // 提高层级，防止被轮播图覆盖
+    z-index: 999;
+  }
 </style>
